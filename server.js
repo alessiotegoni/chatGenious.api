@@ -38,7 +38,7 @@ app.use(express.json());
 app.use("/users", verifyJWT, usersRoutes);
 app.use('/chats', verifyJWT, verifyUserExist, chatRoutes)
 app.use("/auth", authRoutes);
-console.log(process.env.DATABASE_URI);
+
 connect(process.env.DATABASE_URI)
   .then(() =>
     app.listen(PORT, () =>

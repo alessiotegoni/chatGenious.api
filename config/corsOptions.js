@@ -1,15 +1,22 @@
+dotenv.config();
+import dotenv from "dotenv";
+
 const allowedOrigins = [
-    'https://chatgenious.onrender.com',
-]
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5173"
+    : "https://chatgenious.onrender.com", // production
+];
+
+console.log(allowedOrigins);
 
 export const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
-    },
-    credentials: true,
-    optionsSuccessStatus: 200,
-}
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
