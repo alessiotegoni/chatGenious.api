@@ -34,8 +34,7 @@ export const createChat = asyncHandler(async (req, res) => {
   const response = await request.json();
 
   const chatImage =
-    response?.items[1]?.pagemap?.cse_image[0]?.src ||
-    "/imgs/default-user.png";
+    response?.items[1]?.pagemap?.cse_image[0]?.src || null;
 
   user.chats.push({ chatName, chatImage, messages: [], createdAt });
 
