@@ -47,7 +47,7 @@ export const login = asyncHandler(async (req, res) => {
     {
       userId: userExist._id.toString(),
       username,
-      createdAt: userExist.createdAt
+      createdAt: userExist.createdAt,
     },
     "access",
     "1d"
@@ -65,7 +65,7 @@ export const login = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json({ success, message: "Utente loggato con successo", accessToken });
+    .json({ success, message: `Benvenuto/a ${username}`, accessToken });
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -98,7 +98,7 @@ export const refresh = asyncHandler(async (req, res) => {
         {
           userId: foundUser._id.toString(),
           username: foundUser.username,
-          createdAt: foundUser.createdAt
+          createdAt: foundUser.createdAt,
         },
         "access",
         "15m"
