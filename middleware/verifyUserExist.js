@@ -9,7 +9,5 @@ export const verifyUserExist = asyncHandler(async (req, res, next) => {
   if (!user)
     return res.status(404).json({ message: `User [${userId}] not found` });
 
-  req.user = user;
-
   next();
 });

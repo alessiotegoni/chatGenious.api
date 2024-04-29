@@ -3,11 +3,9 @@ import asyncHandler from "express-async-handler";
 import { gemini } from "../server.js";
 
 export const getChats = asyncHandler(async (req, res) => {
-  const user = await userSchema.findById(req.user._id);
+  const user = await userSchema.findById(req.user.userId);
 
-  await user.updateOne({ lastAccess: new Date(Date.now()).toISOString() });
-
-  res.json(req.user.chats);
+  res.json(user.chats);
 });
 
 export const createChat = asyncHandler(async (req, res) => {
@@ -16,7 +14,7 @@ export const createChat = asyncHandler(async (req, res) => {
   if (!chatName || !createdAt)
     return res.status(400).json({ message: "Chat name and creation required" });
 
-  const user = await userSchema.findById(req.user._id);
+  const user = await userSchema.findById(req.user.userId);
 
   if (
     user.chats.find(
@@ -33,8 +31,7 @@ export const createChat = asyncHandler(async (req, res) => {
   );
   const response = await request.json();
 
-  const chatImage =
-    response?.items[1]?.pagemap?.cse_image[0]?.src || null;
+  const chatImage = response?.items[1]?.pagemap?.cse_image[0]?.src || null;
 
   user.chats.push({ chatName, chatImage, messages: [], createdAt });
 
@@ -53,7 +50,7 @@ export const deleteChat = asyncHandler(async (req, res) => {
       .status(400)
       .json({ message: "Please provide a delete type (ALL, BY_ID)" });
 
-  const user = await userSchema.findById(req.user._id);
+  const user = await userSchema.findById(req.user.userId);
 
   let message = "";
 
@@ -87,7 +84,7 @@ export const saveChatMsgs = asyncHandler(async (req, res) => {
   if (!chatId || !newMsg)
     return res.status(404).json({ message: "Chat id or user message missing" });
 
-  const user = await userSchema.findById(req.user._id);
+  const user = await userSchema.findById(req.user.userId);
 
   const chat = user.chats.find((c) => c._id.toString() === chatId);
 
@@ -155,7 +152,7 @@ export const deleteChatMsgs = asyncHandler(async (req, res) => {
   if (!chatId)
     return res.status(400).json({ message: "Please provide a chat id" });
 
-  const user = await userSchema.findById(req.user._id);
+  const user = await userSchema.findById(req.user.userId);
 
   const chatIndex = user.chats.findIndex((c) => c._id.toString() === chatId);
 
