@@ -28,6 +28,11 @@ export const register = asyncHandler(async (req, res) => {
   if (!username || !password)
     return res.status(403).json({ message: "Riempi ogni campo" });
 
+  if (username.length < 8 || password.length < 8)
+    return res.status(403).json({
+      message: "L'username e la password devono contenere almeno 8 caratteri",
+    });
+
   const usernameExist = await userSchema.findOne({ username }).exec();
 
   if (usernameExist)
@@ -81,7 +86,7 @@ export const login = asyncHandler(async (req, res) => {
 
   res
     .status(201)
-    .json({ success, message: `Benvenuto/a ${username}`, accessToken });
+    .json({ success, message: `Bentornato/a ${username}`, accessToken });
 });
 
 export const logout = asyncHandler(async (req, res) => {
