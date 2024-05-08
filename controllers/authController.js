@@ -1,26 +1,8 @@
 import userSchema from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
-import { signJWT } from "../utils/index.js";
+import { signJWT, signTokens } from "../utils/index.js";
 import jwt from "jsonwebtoken";
-
-const signTokens = (res, userInfo) => {
-  const accessToken = signJWT({ ...userInfo }, "access", "1d");
-  const refreshToken = signJWT(
-    { username: userInfo.username },
-    "refresh",
-    "15d"
-  );
-
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  return { accessToken };
-};
 
 export const register = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
