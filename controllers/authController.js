@@ -4,6 +4,24 @@ import bcrypt from "bcryptjs";
 import { signJWT } from "../utils/index.js";
 import jwt from "jsonwebtoken";
 
+const signTokens = (res, userInfo) => {
+  const accessToken = signJWT({ ...userInfo }, "access", "1d");
+  const refreshToken = signJWT(
+    { username: userInfo.username },
+    "refresh",
+    "15d"
+  );
+
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  return { accessToken };
+};
+
 export const register = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
@@ -21,9 +39,17 @@ export const register = asyncHandler(async (req, res) => {
 
   const addedUser = new userSchema({ ...req.body, password: hashedPw });
 
-  await addedUser.save();
+  const newUser = await addedUser.save();
 
-  res.status(200).json({ message: `Benvenuto/a ${username}` });
+  const userInfo = {
+    userId: newUser._id.toString(),
+    username,
+    createdAt: newUser.createdAt,
+  };
+
+  const { accessToken } = signTokens(res, userInfo);
+
+  res.status(200).json({ message: `Benvenuto/a ${username}`, accessToken });
 });
 
 export const login = asyncHandler(async (req, res) => {
@@ -43,23 +69,13 @@ export const login = asyncHandler(async (req, res) => {
 
   if (!isPwMatch) return res.json({ success, message: "Password errata" });
 
-  const accessToken = signJWT(
-    {
-      userId: userExist._id.toString(),
-      username,
-      createdAt: userExist.createdAt,
-    },
-    "access",
-    "1d"
-  );
-  const refreshToken = signJWT({ username }, "refresh", "15d");
+  const userInfo = {
+    userId: userExist._id.toString(),
+    username,
+    createdAt: userExist.createdAt,
+  };
 
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  const { accessToken } = signTokens(res, userInfo);
 
   success = true;
 
