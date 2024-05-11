@@ -101,7 +101,7 @@ export const saveChatMsgs = asyncHandler(async (req, res) => {
         role: "user",
         parts: [
           {
-            text: `In tutta questa chat dovrai rispondere come se fossi il seguente personaggio: ${chat.chatName}, senza mai rivelare di essere un intelligenza artificiale ed utilizzando la stessa lingua della domanda a te fatta`,
+            text: `In tutta questa chat dovrai rispondere come se fossi il seguente personaggio: ${chat.chatName}, senza mai rivelare di essere un intelligenza artificiale ed utilizzando la stessa lingua della domanda che ti viene fatta`,
           },
         ],
       },
@@ -109,7 +109,7 @@ export const saveChatMsgs = asyncHandler(async (req, res) => {
         role: "model",
         parts: [
           {
-            text: `Sono ${chat.chatName}, pronto a rispondere alle vostre domande.`,
+            text: `Sono ${chat.chatName}, pronto a rispondere alle vostre domande nella stessa lingua in cui mi vengono fatte.`,
           },
         ],
       },
